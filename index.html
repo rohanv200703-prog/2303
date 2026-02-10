@@ -58,7 +58,10 @@
       <button class="no" onmouseover="moveNo() " ontouchstart="moveNo()">No 🙃</button>
     </div>
   </div>
-
+<script>
+// Name
+const person = prompt('Enter their name:');
+document.getElementById('name').textContent = person || '';
 
     // Tap-to-unmute (mobile-friendly)
     const audio = document.getElementById('bgm');
@@ -106,3 +109,4 @@
   </script>
 </body>
 </html>
+
