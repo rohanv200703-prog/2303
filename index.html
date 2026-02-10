@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Will You Be My Valentine? ISHUBABY !!!</title>
+  <style>
+    :root{
+      --accent:#ff4d6d;          /* will auto-update from photo */
+      --bg1:#ff9a9e;             /* fallback background */
+      --bg2:#fad0c4;
+    }
+    *{box-sizing:border-box;font-family:'Segoe UI',sans-serif}
+    body{
+      margin:0;height:100vh;display:flex;align-items:center;justify-content:center;
+      background:linear-gradient(135deg,var(--bg1),var(--bg2));overflow:hidden;
+    }
+    .phone{
+      width:360px;height:640px;background:#fff;border-radius:30px;
+      box-shadow:0 20px 50px rgba(0,0,0,.3);padding:2rem 1.5rem;text-align:center;position:relative
+    }
+    h1{color:var(--accent);margin:.4rem 0}
+    p{color:#444;margin-bottom:1.1rem}
+    .countdown{font-weight:600;color:var(--accent);margin-bottom:1.1rem}
+    .buttons{display:flex;justify-content:center;gap:1rem}
+    button{border:none;padding:.8rem 1.5rem;font-size:1rem;border-radius:999px;cursor:pointer;transition:transform .2s ease}
+    button:hover{transform:scale(1.05)}
+    .yes{background:var(--accent);color:#fff}
+    .no{background:#eee;color:#333;position:relative}
+    .hearts{font-size:2rem;margin-bottom:.5rem}
+    .heart{position:absolute;color:var(--accent);font-size:1.5rem;animation:float 4s linear infinite}
+    @keyframes float{from{transform:translateY(100vh);opacity:1}to{transform:translateY(-10vh);opacity:0}}
+    .photo{width:100%;border-radius:16px;margin-top:1rem;box-shadow:0 10px 30px rgba(0,0,0,.2);opacity:0;animation:fadeIn .9s ease forwards}
+    @keyframes fadeIn{to{opacity:1}}
+
+    /* Tap-to-unmute overlay */
+    .unmute{
+      position:absolute;inset:0;background:rgba(0,0,0,.55);color:#fff;border-radius:30px;
+      display:flex;align-items:center;justify-content:center;font-size:1.1rem;cursor:pointer
+    }
+    .unmute span{background:rgba(0,0,0,.35);padding:.8rem 1.2rem;border-radius:999px}
+  </style>
+</head>
+<body>
+  <!-- Background music (change src to your MP3) -->
+  <audio id="bgm" loop>
+    <source src="song.mp3"type="audio/mpeg">
+  </audio>
+  <script src="script.js"></script>
+  <div class="phone" id="card">
+    <div class="unmute" id="unmute" onclick="startAudio()"><span>🔊 Tap to unmute</span></div>
+    <div class="hearts">💖💖💖</div>
+    <h1>Will you be my Valentine, <span id="name"></span>?</h1>
+    <p>You’d make this day extra special 🌸</p>
+    <div class="countdown" id="countdown">Loading countdown…</div>
+    <div class="buttons">
+      <button class="yes" onclick="sayYes()">Yes 💕</button>
+      <button class="no" onmouseover="moveNo() " ontouchstart="moveNo()">No 🙃</button>
+    </div>
+  </div>
+
+
+    // Tap-to-unmute (mobile-friendly)
+    const audio = document.getElementById('bgm');
+    function startAudio(){ audio.play(); document.getElementById('unmute').style.display='none'; }
+
+    // Countdown (set the year you want)
+    const target = new Date('2026-02-14T00:00:00');
+    const cd = document.getElementById('countdown');
+    const tick = ()=>{
+      const diff = target - new Date();
+      if(diff<=0){ cd.textContent = "It's Valentine’s Day 💘"; return; }
+      const d=Math.floor(diff/86400000), h=Math.floor(diff/3600000)%24,
+            m=Math.floor(diff/60000)%60, s=Math.floor(diff/1000)%60;
+      cd.textContent = `${d}d ${h}h ${m}m ${s}s until Valentine’s Day 💘`;
+    }; setInterval(tick,1000); tick();
+
+    // After YES: show photo + auto-match colors to the photo
+    function sayYes(){
+      document.getElementById('card').innerHTML = `
+        <h1 style='font-size:2.4rem;'>YAYYYYYYYY!! 💖</h1>
+        <p style='font-size:1.1rem;'>Was really hoping you’d say yes 🥰</p>
+        <p>Secret message: You mean so much to me baby and alot than you know 💌</p>
+        <img id='photo' class='photo' src='photo.jpg' alt='Our photo'/>
+        <p style='margin-top:.8rem;'>ILOVVEYYOUSEEE SOO MUCHH ISHUBABYYY ❤️😘😘😘</p>`;
+
+      // Floating hearts
+      for(let i=0;i<24;i++){const h=document.createElement('div');h.className='heart';h.textContent='💖';h.style.left=Math.random()*100+'vw';h.style.animationDuration=(Math.random()*3+2)+'s';document.body.appendChild(h)}
+
+      // Color extraction (simple dominant color)
+      const img = document.getElementById('photo');
+      img.onload = ()=>{
+        const c=document.createElement('canvas'),x=c.getContext('2d');
+        c.width=img.naturalWidth; c.height=img.naturalHeight; x.drawImage(img,0,0);
+        const d=x.getImageData(0,0,c.width,c.height).data;
+        let r=0,g=0,b=0,n=0;
+        for(let i=0;i<d.length;i+=40){ r+=d[i]; g+=d[i+1]; b+=d[i+2]; n++; }
+        r=Math.round(r/n); g=Math.round(g/n); b=Math.round(b/n);
+        document.documentElement.style.setProperty('--accent',`rgb(${r},${g},${b})`);
+        document.documentElement.style.setProperty('--bg1',`rgba(${r},${g},${b},.55)`);
+        document.documentElement.style.setProperty('--bg2',`rgba(${r},${g},${b},.15)`);
+      };
+    }
+
+    function moveNo(){ const b=document.querySelector('.no'); b.style.transform=`translate(${Math.random()*200-100}px,${Math.random()*200-100}px)`; }
+  </script>
+</body>
+</html>
